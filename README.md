@@ -5,5 +5,7 @@
 4. run `npm run frontend`
 
 ### Credits
-Boilerplate code is from MERN stack, which was adapted for a CIS-350 project by Cameron Cabo and Victor Chien, and then adapted for a Hack4Impact project, which inspired this project. The basic directory set-up and `AppContainer.js` come from the boilerplate. 
+- Boilerplate code is from MERN stack, which was adapted for a CIS-350 project by Cameron Cabo and Victor Chien, and then adapted for a Hack4Impact project, which inspired this project. The basic directory set-up and `AppContainer.js` come from the boilerplate. 
 View MERN stack here: http://mern.io/
+- Material-UI Library for front-end React framework 
+https://material-ui.com/
