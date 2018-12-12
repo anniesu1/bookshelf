@@ -11,6 +11,8 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
+import Books from '../book/Books.js';
+
 // Define color palette
 const theme = createMuiTheme({
   palette: {
@@ -123,84 +125,91 @@ class Login extends Component {
    */
   render() {
     // If user is logged in or if user successfully logs in, redirects to home
-    return (
-      <div
-        className="container centerContent"
-        style={{
-          minHeight: "100vh",
-          padding: "15%",
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "column",
-        }}
-      >
-        <MuiThemeProvider theme={theme}>
-          <p> Welcome to Bookshelf </p>
-          <TextField
-            id="email"
-            label="Email"
-            type="email"
-            margin="normal"
-            onChange={ this.handleChangeEmail }
-            style={{ width: "50%", margin: "0 auto" }}
-          />
+    if (this.state.error === null) {
+      return (
+        <Books/>
+      )
+    }
+    else {
+      return (
+        <div
+          className="container centerContent"
+          style={{
+            minHeight: "100vh",
+            padding: "15%",
+            display: "flex",
+            justifyContent: "center",
+            flexDirection: "column",
+          }}
+        >
+          <MuiThemeProvider theme={theme}>
+            <p> Welcome to Bookshelf </p>
+            <TextField
+              id="email"
+              label="Email"
+              type="email"
+              margin="normal"
+              onChange={ this.handleChangeEmail }
+              style={{ width: "50%", margin: "0 auto" }}
+            />
 
-          <br/>
+            <br/>
 
-          <TextField
-            id="adornment-password"
-            label="Password"
-            margin="normal"
-            type={this.state.showPassword ? 'text' : 'password'}
-            value={this.state.password}
-            onChange={this.handleChangePassword}
-            style={{ width: "50%", margin: "0 auto" }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="Toggle password visibility"
-                    onClick={this.handleClickShowPassword}
-                  >
-                    {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
+            <TextField
+              id="adornment-password"
+              label="Password"
+              margin="normal"
+              type={this.state.showPassword ? 'text' : 'password'}
+              value={this.state.password}
+              onChange={this.handleChangePassword}
+              style={{ width: "50%", margin: "0 auto" }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="Toggle password visibility"
+                      onClick={this.handleClickShowPassword}
+                    >
+                      {this.state.showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-          <br/>
-          <br/>
-          <br/>
+            <br/>
+            <br/>
+            <br/>
 
-          <Button
-            color="secondary"
-            onClick={ this.handleLoginSubmit }
-            size="large"
-            variant="outlined"
-            style={{ width: "50%", margin: "0 auto" }}
-          >
-            LOGIN
-          </Button>
+            <Button
+              color="secondary"
+              onClick={ this.handleLoginSubmit }
+              size="large"
+              variant="outlined"
+              style={{ width: "50%", margin: "0 auto" }}
+            >
+              LOGIN
+            </Button>
 
-          <br/>
+            <br/>
 
-          <Button
-            size="large"
-            variant="outlined"
-            color="secondary"
-            style={{ width: "50%", margin: "0 auto" }}
-          >
-            <Link to="/register">
-              REGISTER
-            </Link>
-          </Button>
+            <Button
+              size="large"
+              variant="outlined"
+              color="secondary"
+              style={{ width: "50%", margin: "0 auto" }}
+            >
+              <Link to="/register">
+                REGISTER
+              </Link>
+            </Button>
 
-          <br/>
-          <br/>
-        </MuiThemeProvider>
-      </div>
-    );
+            <br/>
+            <br/>
+          </MuiThemeProvider>
+        </div>
+      );
+    }
   }
 }
 

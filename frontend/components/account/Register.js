@@ -177,20 +177,13 @@ class Register extends Component {
       <div
           className="container centerContent"
           style={{
-            background: "#B6CDCD",
             minHeight: "100vh",
+            padding: "15%",
             display: "flex",
+            justifyContent: "center",
             flexDirection: "column",
+            background: "#e8ccd6"
           }}>
-
-      <div
-        style={{
-          paddingRight: "15%",
-          paddingLeft: "15%",
-          paddingBottom: "15%",
-          justifyContent: "center",
-        }}
-      >
 
           <TextField
             required
@@ -271,8 +264,13 @@ class Register extends Component {
           >Register</Button>
 
           <br/>
+          <br/>
+          
+          <Link to="/login">
+            ALREADY HAVE AN ACCOUNT? LOG IN
+          </Link>
 
-      </div>
+          <br/>
       </div>
     );
   }

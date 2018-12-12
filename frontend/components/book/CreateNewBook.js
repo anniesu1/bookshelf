@@ -14,14 +14,13 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff';
 // Define color palette
 const theme = createMuiTheme({
   palette: {
-    type: 'dark',
+    palette: 'dark',
     primary: {
-      main: '#FFFFFF',
-      contrastText: '#fff'
+      main: '#A3BAC3',
+      contrastText: '#FFFFFF'
     },
     secondary: {
-      main: '#FFFFFF',
-      contrastText: '#00ACC1'
+      main: '#A5A4A9',
     },
   },
 });
@@ -134,7 +133,7 @@ class CreateNewBook extends Component {
       <div
         className="container centerContent"
         style={{
-          background: "#000000",
+          background: "#A5A4A9",
           minHeight: "100vh",
           padding: "15%",
           display: "flex",
@@ -143,6 +142,10 @@ class CreateNewBook extends Component {
         }}
       >
         <MuiThemeProvider theme={theme}>
+          <Link to="/book/all"> BOOKS </Link>
+          <Link to="/book/new"> ADD NEW BOOK </Link>
+          <br/>
+
           <p> Add a new book </p>
           <TextField
             id="title"
