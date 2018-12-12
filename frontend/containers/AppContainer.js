@@ -16,6 +16,7 @@ import Register from '../components/account/Register';
 import Delete from '../components/account/Delete';
 import Update from '../components/account/Update';
 import Authenticate from '../components/account/Authenticate';
+import CreateNewBook from '../components/book/CreateNewBook';
 
 // Import image upload component
 import ImageUpload from '../components/imageUpload/ImageUpload';
@@ -58,9 +59,8 @@ class AppContainer extends React.Component {
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/register" component={Register} />
                 <Route exact path="/logout" component={Login} /> // TODO: update dummy logout path
-                <Route exact path="/account/delete" component={Delete} />
-                <Route exact path="/account/update" component={Update} />
                 <Route path="/authenticate/:token" component={Authenticate} />
+                <Route path="/book/new" component={CreateNewBook} />
 
                 /* Image upload route */
                 <Route exact path="/upload" component={ImageUpload} />

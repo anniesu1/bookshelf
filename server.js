@@ -40,9 +40,10 @@ if (error) {
   process.exit();
 }
 
-// Import app
+// Import backend routes
 const account = require('./backend/routes/account');
 const imageUpload = require('./backend/routes/imageUpload');
+const book = require('./backend/routes/book');
 
 // Storage of information
 const session = require('express-session');
@@ -65,6 +66,7 @@ app.use(session({
 // Prefix all backend routes with "/api"
 app.use('/api/user', account);
 app.use('/api/', imageUpload);
+app.use('/api/book', book);
 
 // All other routes go to the frontend
 app.get('*', (request, response) => {

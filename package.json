@@ -37,6 +37,7 @@
     "express-session": "^1.15.6",
     "filereader": "^0.10.3",
     "fs": "0.0.1-security",
+    "jwt-simple": "^0.5.5",
     "mocha": "^3.2.0",
     "moment": "^2.22.2",
     "mongoose": "^5.3.9",

@@ -10,20 +10,15 @@ import { Button, IconButton, InputAdornment, TextField } from '@material-ui/core
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-// Import logo
-//import clsLogo from '../../assets/images/clsLogo.png';
 
 // Define color palette
 const theme = createMuiTheme({
   palette: {
-    type: 'dark',
     primary: {
-      main: '#FFFFFF',
-      contrastText: '#fff'
+      main: '#fcf8ba'
     },
     secondary: {
-      main: '#FFFFFF',
-      contrastText: '#00ACC1'
+      main: '#67C4D6',
     },
   },
 });
@@ -84,6 +79,7 @@ class Login extends Component {
             error: null,
             pending: false,
           });
+          console.log("successfully logged in");
         }
       })
       // If there was some unhandled error to this point
@@ -131,7 +127,6 @@ class Login extends Component {
       <div
         className="container centerContent"
         style={{
-          background: "#000000",
           minHeight: "100vh",
           padding: "15%",
           display: "flex",
@@ -146,9 +141,8 @@ class Login extends Component {
             label="Email"
             type="email"
             margin="normal"
-            variant="outlined"
             onChange={ this.handleChangeEmail }
-            style={{ width: "80%", margin: "0 auto" }}
+            style={{ width: "50%", margin: "0 auto" }}
           />
 
           <br/>
@@ -160,8 +154,7 @@ class Login extends Component {
             type={this.state.showPassword ? 'text' : 'password'}
             value={this.state.password}
             onChange={this.handleChangePassword}
-            variant="outlined"
-            style={{ width: "80%", margin: "0 auto" }}
+            style={{ width: "50%", margin: "0 auto" }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -182,22 +175,26 @@ class Login extends Component {
 
           <Button
             color="secondary"
-            variant="contained"
             onClick={ this.handleLoginSubmit }
             size="large"
-            style={{ width: "80%", margin: "0 auto" }}
+            variant="outlined"
+            style={{ width: "50%", margin: "0 auto" }}
           >
             LOGIN
           </Button>
 
           <br/>
 
-          <Link
-            style={{ color: '#FFF' }}
-            to="/register"
+          <Button
+            size="large"
+            variant="outlined"
+            color="secondary"
+            style={{ width: "50%", margin: "0 auto" }}
           >
-            CREATE AN ACCOUNT
-          </Link>
+            <Link to="/register">
+              REGISTER
+            </Link>
+          </Button>
 
           <br/>
           <br/>

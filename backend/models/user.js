@@ -26,13 +26,19 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  books: [
+    {
+      type: Schema.ObjectId,
+      ref: 'Book',
+      default: [],
+    }
+  ],
   authenticated: {
     type: Boolean,
     default: false,
   },
 });
 
-// TODO: Write a method that updates user schema when the user inputs their landlord information
 UserSchema.method('authenticate', function() {
   this.authenticated = true;
 });

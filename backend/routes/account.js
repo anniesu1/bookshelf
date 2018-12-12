@@ -5,6 +5,10 @@ const router = express.Router();
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
+// Import JWT
+var jwt = require('jwt-simple');
+var secret = 'cis197isthebest';
+
 // Import models
 const User = require('../models/models').User;
 const PendingVerification = require('../models/models').PendingVerification;
@@ -38,7 +42,14 @@ router.post('/login', (req, res) => {
     if (existingUser) {
       // Check that the hashed input password equals the backend password
       if (bCrypt.compareSync(password, existingUser.password)) {
-        req.session.email = email;
+        // Set JWT token and update session information
+        var payload = existingUser._id;
+        var token = jwt.encode(payload, secret);
+        req.session.token = token;
+        req.session.firstName = existingUser.firstName;
+        req.session.email = existingUser.email;
+        console.log("req.session is " + req.session);
+
         // Log in the user
         res.send({
       		success: true,
@@ -64,167 +75,11 @@ router.post('/login', (req, res) => {
 });
 
 /**
- * Helper function to send an email when the user registers
- */
-const sendEmailAuth = (emailRecipient, userId, cb) => {
-  // Error checking
-  if (!emailRecipient || emailRecipient === '') {
-    // Trigger the callback function
-    cb({
-      success: false,
-      error: 'You must provide an email',
-    });
-    return;
-  }
-
-  const pendingVerif = new PendingVerification({
-    user: userId,
-  });
-  pendingVerif.save()
-    .catch(saveVerifErr => {
-      cb({
-        success: false,
-        error: 'Error saving verification for user: ' + saveVerifErr.message,
-      });
-    });
-
-  // Create the email object with a link to authenticate the user
-  const msg = {
-    from: process.env.SENDGRID_EMAIL,
-    to: emailRecipient,
-    subject: 'Your CLS verification email',
-    html: `<p>
-            Hi NAME,<br/><br/>
-            Please click on the link below to verify your account:<br/>
-            ${pendingVerif.getConfirmationLink()}<br/>
-            Thanks</p>`,
-  };
-
-  // Send the email
-  sgMail.send(msg, (err, result) => {
-    if (err) {
-      cb({
-        success: false,
-        error: 'Validation email could not be sent: ' + err.toString(),
-      });
-    } else {
-      cb({
-        success: true,
-        error: null,
-      });
-    }
-  });
-};
-
-/**
- * Handle authenticating and resending confirmation emails
- */
-router.post('/authenticate', (req, res) => {
-  // Obtain the confirmation token
-  const token = req.body.token;
-
-  // Try to find this token in the database
-  PendingVerification.findOne({ 'hash': token })
-    .populate('user')
-    .exec((verificationErr, dbVerification) => {
-    if (verificationErr || !dbVerification) {
-      res.send({
-        success: false,
-        error: 'Error finding verification token: ' + verificationErr,
-      });
-      return;
-    } else if (dbVerification.isExpired()) {
-      // The token exists, but it has expired
-      res.send({
-        success: false,
-        error: 'Verification token expired. Please resend authentication email',
-      });
-      return;
-    } else {
-      // Authenticate the user with this token
-        let user = dbVerification.user;
-        user.authenticate();
-        user.save()
-          .then(newUser => {
-            // Once we authenticate user, delete verification token
-            // TOOD: change to id
-            PendingVerification.deleteOne({ 'user' : dbVerification.user }, (err, verifObj) => {
-              if (err) {
-                //TODO? still send success but with error message
-                res.send({
-                  success: false,
-                  error: 'Could not delete verification token',
-                })
-              }
-            })
-            res.send({
-              success: true,
-              error: null,
-            });
-          })
-          .catch(saveUserErr => {
-            res.send({
-              success: false,
-              error: 'Error saving authentication: ' + saveUserErr,
-            });
-          });
-      //});
-    }
-  });
-});
-
-/**
  * Generates hash using bCrypt, storing password safely
  */
 const createHash = (password) => {
   return bCrypt.hashSync(password, bCrypt.genSaltSync(10));
 };
-
-
-/**
- * Handle resending of verification email
- */
-router.post('/resend', (req, res) => {
-  // Check if user is logged in
-  if (!req.session.email) {
-    res.send({
-      success: false,
-      error: 'You must be logged in.'
-    });
-    return;
-  }
-
-  // Find the current user
-  User.findOne({'email': req.session.email}, (errUser, user) => {
-    if (errUser || !user) {
-      res.send({
-        success: false,
-        error: 'Error finding user.'
-      });
-      return;
-    }
-
-    // Delete current verification token; it's expired and/or will be replaced
-    PendingVerification.findOneAndDelete({'user': user.id}, (err, verifToken) => {
-      if (err) {
-        res.send({
-          success: false,
-          error: 'Error deleting current auth token'
-        });
-        return;
-      }
-    })
-
-    // Resend an email to confirm their account
-    sendEmailAuth(user.email, user.id, emailRes => {
-      res.send({
-        success: emailRes.success,
-        error: emailRes.error,
-      });
-      return;
-    });
-  });
-});
 
 /**
  * Verify that the input matches email regex
@@ -295,12 +150,10 @@ router.post('/register', (req, res) => {
     user.save()
       .then(newUser => {
         // Send the verification email
-        sendEmailAuth(newUser.email, newUser.id, emailRes => {
-          res.send({
-            success: emailRes.success,
-            error: emailRes.error,
-          });
-        });
+        res.send({
+          success: true,
+          error: null
+        })
       })
       .catch(saveUserErr => {
         // If there was an error
@@ -364,90 +217,6 @@ router.post('/delete', (req, res) => {
       error: null,
     });
     return;
-  });
-});
-
-/**
- * Register a user
- */
-router.post('/register', (req, res) => {
-  // Pull values from the request
-  const {
-    type,
-    firstName,
-    lastName,
-    email,
-    password,
-    startDate
-  } = req.body;
-
-  // Check that the input email is a valid email url
-  if (!emailIsValid(email)) {
-    res.send({
-      success: false,
-      error: 'Invalid email',
-    });
-    return;
-  }
-
-  // Check if any of the form fields are null
-  if (!type || !firstName || !lastName || !password || !startDate) {
-    res.send({
-      success: false,
-      error: 'Please complete all form fields',
-    });
-    return;
-  }
-
-  // Check to see if the email is already in the database
-  User.findOne({ 'email': email }, (existingUserErr, existingUser) => {
-    if (existingUserErr) {
-    	res.send({
-    		success: false,
-    		error: 'Error connecting to database',
-    	});
-      return;
-    } else
-  	// If the email already exists, send an error
-    if (existingUser) {
-		  res.send({
-			  success: false,
-		    error: 'User with email ' + req.body.email + ' already exists.',
-		  });
-      return;
-    } else {
-      // If there is not already a user in the database with the same email
-      // Create a new user in the database
-      const user = new User({
-        type,
-        firstName,
-        lastName,
-        email,
-        password: createHash(req.body.password),
-        startDate
-      });
-
-      // Attempt to save the user
-      user.save()
-        .then(newUser => {
-          // Send the verification email
-          sendEmailAuth(newUser.email, emailRes => {
-            res.send({
-              success: emailRes.success,
-              info: emailRes.email,
-              user: newUser,
-              error: emailRes.error,
-            });
-          });
-        })
-        .catch(saveUserErr => {
-          // If there was an error
-          res.send({
-            success: false,
-            error: 'Error saving user, ' + saveUserErr.message,
-          });
-        });
-    }
   });
 });
 
@@ -540,74 +309,5 @@ router.post('/update', (req, res) => {
     }
   });
 });
-
-/**
-* Change password
-*/
-router.post('/changePassword', (req, res) => {
-  // Check if user is logged in
-  const email = req.session.email;
-  if (!email) {
-    res.send({
-      success: false,
-      error: 'Error: no user is logged in',
-    });
-    return;
-  }
-
-  // Pull values from the request
-  var {
-    oldPassword,
-    newPassword,
-    newPasswordVerify
-  } = req.body;
-
-  // Trim inputs
-  oldPassword = oldPassword.trim();
-  newPassword = newPassword.trim();
-  newPasswordVerify = newPasswordVerify.trim();
-
-  // Check if any inputs are empty
-  if (!oldPassword || !newPassword || !newPasswordVerify) {
-    res.send({
-      success: false,
-      error: 'Error: Please fill out all password form fields'
-    });
-    return;
-  }
-
-  // Check that both new password and new password verification are the same
-  if (newPassword !== newPasswordVerify) {
-    res.send({
-      success: false,
-      error: 'Error: new passwords do not match'
-    });
-    return;
-  }
-
-  User.findOne({ 'email': email }, (err, user) => {
-    // Check that the old password matches the user's old password input
-    if (bCrypt.compareSync(oldPassword, user.password)) {
-      // Change the password of the user
-      user.password = createHash(newPassword);
-
-      // Save the user information updates to database
-      user.save(function (saveUserErr) {
-        if (saveUserErr) {
-          res.send({
-            success: false,
-            error: 'Could not update and save user password',
-          });
-        } else {
-          res.send({
-            success: true,
-            error: null,
-          });
-        }
-      });
-    }
-  });
-});
-
 
 module.exports = router;

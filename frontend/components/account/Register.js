@@ -14,17 +14,16 @@ import ArrowBackIos from '@material-ui/icons/ArrowBackIos';
 
 const theme = createMuiTheme({
   palette: {
-    type: 'dark',
     primary: {
-      main: '#FFFFFF',
-      contrastText: '#fff'
+      main: '#fcf8ba',
+      contrastText: '#FFFFFF'
     },
-    secondary: { main: '#FFFFFF',
-      contrastText: '#00BCD4'
-    }
+    secondary: {
+      main: '#B6CDCD',
+      contrastText: '#FFFFFF'
+    },
   },
 });
-
 
 /**
  * Component to render the form for a user registering
@@ -178,18 +177,12 @@ class Register extends Component {
       <div
           className="container centerContent"
           style={{
-            background: "#DFC4B6",
+            background: "#B6CDCD",
             minHeight: "100vh",
             display: "flex",
             flexDirection: "column",
           }}>
-          <p style={{ margin: "2% 0% 5% 0%", paddingLeft: "10%", paddingRight: "10%"}}>
-            <font color="white">
-            <ArrowBackIos style={{ float: "left" }}/>
-            {/* TODO: add link to ArrowBackIos to Login */}
-            <strong style={{ float: "left" }}> Login </strong>
-            </font>
-          </p>
+
       <div
         style={{
           paddingRight: "15%",
@@ -198,15 +191,14 @@ class Register extends Component {
           justifyContent: "center",
         }}
       >
-        <MuiThemeProvider theme={theme}>
+
           <TextField
             required
             id="first name"
             label="First Name"
             type="text"
             margin="normal"
-            variant="outlined"
-            style={{ width: "80%", margin: "0 auto" }}
+            style={{ width: "50%", margin: "0 auto" }}
             onChange={ this.handleChangeFirstName }/>
           <br/>
           <br/>
@@ -215,8 +207,7 @@ class Register extends Component {
             id="last name"
             label="Last Name"
             margin="normal"
-            variant="outlined"
-            style={{ width: "80%", margin: "0 auto" }}
+            style={{ width: "50%", margin: "0 auto" }}
             type="text"
             onChange= { this.handleChangeLastName }/>
           <br/>
@@ -226,9 +217,8 @@ class Register extends Component {
             id="email"
             label="Email"
             margin="normal"
-            variant="outlined"
             type="email"
-            style={{ width: "80%", margin: "0 auto" }}
+            style={{ width: "50%", margin: "0 auto" }}
             onChange= { this.handleChangeEmail }/>
           <br/>
           <br/>
@@ -239,9 +229,8 @@ class Register extends Component {
             required
             label="Password"
             margin="normal"
-            variant="outlined"
             onChange= { this.handleChangePassword }
-            style={{ width: "80%", margin: "0 auto" }}
+            style={{ width: "50%", margin: "0 auto" }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -263,8 +252,7 @@ class Register extends Component {
             label="Verify Password"
             type="password"
             margin="normal"
-            variant="outlined"
-            style={{ width: "80%", margin: "0 auto" }}
+            style={{ width: "50%", margin: "0 auto" }}
             onChange= { this.handleConfirmPassword }/>
           <br/>
           <br/>
@@ -277,15 +265,13 @@ class Register extends Component {
 
           <Button
             size="large"
-            style={{ width: "80%", margin: "0 auto" }}
-            color="secondary"
-            variant="contained"
+            style={{ width: "50%", margin: "0 auto" }}
+            variant="outlined"
             onClick={ this.handleRegisterSubmit }
           >Register</Button>
 
           <br/>
 
-        </MuiThemeProvider>
       </div>
       </div>
     );

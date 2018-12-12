@@ -1,16 +1,19 @@
 // Import frameworks
 const mongoose = require('mongoose');
 
-// Import schemas from their files
+// Import schema files
 const UserSchema = require('./user');
 const PendingVerificationSchema = require('./pendingVerification');
+const BookSchema = require('./book');
 
-// Create a database model for each schema
+// Create models on database side
 const User = mongoose.model('User', UserSchema);
 const PendingVerification = mongoose.model('PendingVerification', PendingVerificationSchema);
+const Book = mongoose.model('Book', BookSchema);
 
 // Export all schemas
 module.exports = {
   User,
   PendingVerification,
+  Book,
 };
